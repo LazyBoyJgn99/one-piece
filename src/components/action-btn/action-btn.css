@@ -2,15 +2,15 @@
   display: flex;
   height: 400px;
   width: 200px;
-  background-color: aquamarine;
-  border: 5px solid aquamarine;
+  background-color: rgb(208, 181, 86);
+  border: 5px solid rgb(208, 181, 86);
   border-radius: 12px;
   padding: 20px;
   flex-direction: column;
 }
 .active {
-  background-color: aquamarine;
-  border: 5px solid rgb(7, 132, 90);
+  background-color: rgb(255, 249, 127);
+  border: 5px solid rgb(15, 105, 164);
 }
 
 .actionBtnName {

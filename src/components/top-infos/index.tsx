@@ -24,7 +24,7 @@ function TopInfos(props: TopInfosProps) {
         {attack}
       </div>
       <div className="topInfosItem">
-        <span>金币: </span>
+        <span>悬赏: </span>
         {coin}
       </div>
     </div>

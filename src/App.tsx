@@ -48,6 +48,8 @@ const App = () => {
           alert('你死啦，重新开始吧');
         } else if (level < 20) {
           alert(`击败了${level}艘海盗船，不错哦`);
+        } else if (level < 50) {
+          alert(`击败了${level}艘海盗船，太强啦`);
         } else {
           alert(`击败了${level}艘海盗船，海贼王就是你啦`);
         }
