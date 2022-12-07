@@ -1,0 +1,9 @@
+.bottomButtons {
+  position: fixed;
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
+  display: flex;
+  padding: 20px;
+  justify-content: space-around;
+  width: 100vw;
+}

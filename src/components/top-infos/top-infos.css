@@ -1,0 +1,13 @@
+.topInfos {
+  position: fixed;
+  top: constant(safe-area-inset-top);
+  top: env(safe-area-inset-top);
+  padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.topInfos__item {
+  width: 200px;
+}

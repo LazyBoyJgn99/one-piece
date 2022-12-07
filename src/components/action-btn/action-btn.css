@@ -1,7 +1,18 @@
 .actionBtn {
   display: flex;
-  height: 200px;
-  width: 100px;
+  height: 400px;
+  width: 200px;
   background-color: aquamarine;
   border-radius: 12px;
+  padding: 20px;
+  flex-direction: column;
+}
+.active {
+  background-color: rgb(93, 215, 174);
+}
+
+.ActionBtnNum {
+  margin-top: 20px;
+  font-size: 50px;
+  font-weight: bold;
 }

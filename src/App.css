@@ -1,13 +1,51 @@
 .App {
   text-align: center;
+  background-color: aqua;
+  height: 100vh;
 }
 
-.bottomButtons {
-  position: fixed;
-  bottom: constant(safe-area-inset-bottom);
-  bottom: env(safe-area-inset-bottom);
-  display: flex;
-  padding: 20px 0;
-  justify-content: space-around;
-  width: 100vw;
+.gameSpace {
+  position: relative;
+  /* transform: translateY(50%); */
+  background-color: aqua;
+  width: 750px;
+  height: 750px;
+}
+
+.my {
+  position: absolute;
+  bottom: 0;
+  left: 100px;
+}
+.myObj {
+  background-color: antiquewhite;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+}
+.myHpWrap {
+  background-color: antiquewhite;
+  width: 200px;
+  height: 20px;
+}
+
+.myHp {
+  height: 20px;
+  background-color: rgb(28, 246, 57);
+}
+
+.them {
+  position: absolute;
+  top: 0;
+  right: 100px;
+}
+
+.themHp {
+  height: 20px;
+  background-color: rgb(223, 33, 96);
+}
+
+.level {
+  padding: 100px;
+  font-size: 64px;
 }
