@@ -29,6 +29,9 @@ const App = () => {
 
   const intervalAtt = useRef<any>();
   const attackOnce = () => {
+    if (intervalAtt.current === undefined) {
+      return null;
+    }
     // 被攻击
     setHp((data) => {
       if (data - themAttack <= 0) {
@@ -130,7 +133,7 @@ const App = () => {
               setAttack(attack + 1);
             }
             if (item.label === '2') {
-              setHp(Math.max(hp + hpMax * 0.2, hpMax));
+              setHp(Math.min(hp + hpMax * 0.2, hpMax));
             }
             if (item.label === '3') {
               setHpMax(hpMax + 100);
