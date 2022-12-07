@@ -14,7 +14,7 @@ const App = () => {
   // 攻击力
   const [attack, setAttack] = React.useState(1);
   // 财富
-  const [coin, setCoin] = React.useState(1);
+  const [coin, setCoin] = React.useState(0);
 
   // 怪兽生命值
   const [themHp, setThemHp] = React.useState(10);

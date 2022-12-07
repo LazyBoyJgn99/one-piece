@@ -16,15 +16,15 @@ function TopInfos(props: TopInfosProps) {
   return (
     <div className="topInfos">
       <div className="topInfosItem">
-        <span>hp: </span>
+        <span>生命: </span>
         {hpMax}
       </div>
       <div className="topInfosItem">
-        <span>attack: </span>
+        <span>攻击: </span>
         {attack}
       </div>
       <div className="topInfosItem">
-        <span>coin: </span>
+        <span>金币: </span>
         {coin}
       </div>
     </div>

@@ -27,8 +27,9 @@ function ActionBtn({
       className={classNames('actionBtn', active && 'active', className)}
       {...props}
     >
-      <div className="ActionBtnName">{name}</div>
-      <div className="ActionBtnNum">{num}</div>
+      <div className="actionBtnName">{name}</div>
+      <div className="actionBtnNum">{num}</div>
+      {active && <div className="confirm">确认</div>}
     </div>
   );
 }

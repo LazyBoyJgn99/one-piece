@@ -3,16 +3,27 @@
   height: 400px;
   width: 200px;
   background-color: aquamarine;
+  border: 5px solid aquamarine;
   border-radius: 12px;
   padding: 20px;
   flex-direction: column;
 }
 .active {
-  background-color: rgb(93, 215, 174);
+  background-color: aquamarine;
+  border: 5px solid rgb(7, 132, 90);
 }
 
-.ActionBtnNum {
+.actionBtnName {
+  font-size: 36px;
+}
+
+.actionBtnNum {
   margin-top: 20px;
   font-size: 50px;
   font-weight: bold;
+}
+
+.confirm {
+  margin-top: 20px;
+  font-size: 36px;
 }

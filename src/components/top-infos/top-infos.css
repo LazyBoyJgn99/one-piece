@@ -8,6 +8,7 @@
   width: 100%;
 }
 
-.topInfos__item {
+.topInfosItem {
+  font-size: 36px;
   width: 200px;
 }
