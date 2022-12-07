@@ -1,0 +1,7 @@
+.actionBtn {
+  display: flex;
+  height: 200px;
+  width: 100px;
+  background-color: aquamarine;
+  border-radius: 12px;
+}
