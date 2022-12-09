@@ -282,7 +282,8 @@ const App = () => {
               style={{ width: Math.min(1, themHp / themHpMax) * 100 + '%' }}
             ></div>
           </div>
-          <div className="myObj">{stronger ? '海盗首领🏴‍☠️' : ''}</div>
+          <div className="myObj"></div>
+          <div className="themObjText">{stronger ? '海盗首领🏴‍☠️' : ''}</div>
         </div>
       </div>
       {/* 底部选择区域 */}

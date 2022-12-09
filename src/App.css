@@ -18,7 +18,10 @@
   left: 100px;
 }
 .myObj {
-  background-color: antiquewhite;
+  /* background-color: antiquewhite; */
+  background-image: url('https://i.ibb.co/wrHMGz5/px-Art-3.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
   width: 200px;
   height: 200px;
   margin-top: 20px;
@@ -43,6 +46,10 @@
 .themHp {
   height: 20px;
   background-color: rgb(223, 33, 96);
+}
+
+.themObjText {
+  font-weight: bold;
 }
 
 .level {
