@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import BottomButtons from './components/bottom-buttons';
 import TopInfos from './components/top-infos';
 import './App.css';
 import { ActionBtnProps } from './components/action-btn';
+import useGame from './hooks/useGame';
+import { FillStyle, Graphics, Sprite } from 'pixi.js';
 
 const rewardListData = [
   [
@@ -140,7 +142,9 @@ const rewardListData = [
  * 主应用
  * @returns
  */
-const App = () => {
+function App() {
+  const myRef = useRef<HTMLDivElement>(null);
+  const { app } = useGame({ myRef: myRef, background: '#1099bb' });
   // 生命值
   const [hp, setHp] = React.useState(100);
   const [hpMax, setHpMax] = React.useState(100);
@@ -257,6 +261,40 @@ const App = () => {
     setRewardList(list);
   };
 
+  useEffect(() => {
+    if (!app) {
+      return;
+    }
+    const my = myBoat({ x: 50, y: app.screen.height - 150 });
+    const them = myBoat({ x: app.screen.width - 150, y: 50 });
+  }, [app]);
+
+  const myBoat = ({ x, y }: { x: number; y: number }) => {
+    if (!app) {
+      return;
+    }
+    new FillStyle().color = 0xff0000;
+
+    // create a new Sprite from an image path
+    const bunny = Sprite.from('https://i.ibb.co/wrHMGz5/px-Art-3.png');
+    bunny.width = 100;
+    bunny.height = 100;
+
+    // move the sprite to the center of the screen
+    bunny.x = x;
+    bunny.y = y;
+
+    app.stage.addChild(bunny);
+
+    const hpBig = new Graphics();
+    hpBig.beginFill(0x000000, 0.5);
+    hpBig.drawRect(x, y - 20, 100, 10);
+    hpBig.beginFill(0xde2160);
+    hpBig.drawRect(x, y - 20, Math.min(1, hp / hpMax) * 100, 10);
+    app.stage.addChild(hpBig);
+
+    return { obj: hpBig, x, y };
+  };
   return (
     <div className="App">
       {/* 顶部信息区域 */}
@@ -266,6 +304,7 @@ const App = () => {
       <div className="level">Level. {level}</div>
       {/* 核心游戏画面 */}
       {/* TODO: */}
+      {/* <div className="gameSpace" ref={myRef}></div> */}
       <div className="gameSpace">
         <div className="my">
           <div className="myHpWrap">
@@ -329,13 +368,12 @@ const App = () => {
               attacking({ stronger: true });
               return;
             }
-
             attacking({ stronger });
           }
         }}
       />
     </div>
   );
-};
+}
 
 export default App;
