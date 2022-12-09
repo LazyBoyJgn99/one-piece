@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import BottomButtons from './components/bottom-buttons';
 import TopInfos from './components/top-infos';
-import './App.css';
 import { ActionBtnProps } from './components/action-btn';
 import useGame from './hooks/useGame';
-import { FillStyle, Graphics, Sprite } from 'pixi.js';
+import { FillStyle, Graphics, Sprite, Text } from 'pixi.js';
+
+import './App.css';
+
 
 const rewardListData = [
   [
@@ -145,19 +147,25 @@ const rewardListData = [
 function App() {
   const myRef = useRef<HTMLDivElement>(null);
   const { app } = useGame({ myRef: myRef, background: '#1099bb' });
-  // 生命值
-  const [hp, setHp] = React.useState(100);
-  const [hpMax, setHpMax] = React.useState(100);
-  // 攻击力
-  const [attack, setAttack] = React.useState(1);
-  // 财富
-  const [coin, setCoin] = React.useState(0);
-
-  // 怪兽生命值
-  const [themHp, setThemHp] = React.useState(10);
-  const [themHpMax, setThemHpMax] = React.useState(10);
-  // 攻击力
-  const [themAttack, setThemAttack] = React.useState(1);
+  // 用于canvas渲染
+  const gameState = useRef({
+    my: {
+      hp: 100,
+      hpMax: 100,
+      attack: 1,
+    },
+    them: {
+      hp: 10,
+      hpMax: 10,
+      attack: 1,
+      stronger: false
+    },
+    coin: 0,
+    level: 1,
+    attacking: false
+  })
+  // 用于dom渲染
+  const [gameRenderState, setGameRenderState] = useState(gameState.current)
 
   // 收获时间
   const [rewardTime, setRewardTime] = useState(false);
@@ -166,76 +174,70 @@ function App() {
   // 奖励列表
   const [rewardList, setRewardList] = useState<ActionBtnProps[]>([]);
 
-  // 更强的对手
-  const [stronger, setStronger] = useState(false);
-
-  const intervalAtt = useRef<any>();
 
   // 一次攻击
-  const attackOnce = ({ stronger }: { stronger?: boolean }) => {
-    if (intervalAtt.current === undefined) {
-      return null;
-    }
+  const attackOnce = () => {
     // 被攻击
-    setHp((data) => {
-      if (data - themAttack <= 0) {
-        setLevel(1);
-        setHp(100);
-        setHpMax(100);
-        setAttack(1);
-        setThemHp(10);
-        setThemHpMax(10);
-        setThemAttack(1);
-        setStronger(false);
-        clearInterval(intervalAtt.current);
-        intervalAtt.current = undefined;
-        const num = level - 1;
-        if (num < 10) {
-          alert('你死啦，重新开始吧');
-        } else if (num < 20) {
-          alert(`击败了${num}艘海盗船，不错哦`);
-        } else if (num < 50) {
-          alert(`击败了${num}艘海盗船，太强啦`);
-        } else if (num < 100) {
-          alert(`击败了${num}艘海盗船，牛逼plus`);
-        } else {
-          alert(`击败了${num}艘海盗船，海贼王就是你啦`);
-        }
+    if (gameState.current.them.stronger) {
+      gameState.current.my.hp -= gameState.current.them.attack * 2;
+    } else {
+      gameState.current.my.hp -= gameState.current.them.attack;
+    }
+    // 计算死亡
+    if (gameState.current.my.hp <= 0) {
+      if (gameState.current.level < 10) {
+        alert('你死啦，重新开始吧');
+      } else if (gameState.current.level < 20) {
+        alert(`击败了${gameState.current.level}艘海盗船，不错哦`);
+      } else if (gameState.current.level < 50) {
+        alert(`击败了${gameState.current.level}艘海盗船，太强啦`);
+      } else if (gameState.current.level < 100) {
+        alert(`击败了${gameState.current.level}艘海盗船，牛逼plus`);
+      } else {
+        alert(`击败了${gameState.current.level}艘海盗船，海贼王就是你啦`);
       }
-      if (stronger) {
-        return data - themAttack * 2;
-      }
-      return data - themAttack;
-    });
+      setLevel(1);
+      gameState.current.level = 1;
+      gameState.current.my.hp = 100
+      gameState.current.my.hpMax = 100
+      gameState.current.my.attack = 1
+      gameState.current.them.hp = 10
+      gameState.current.them.hpMax = 10
+      gameState.current.them.attack = 1
+      gameState.current.them.stronger = false
+      gameState.current.attacking = false
+      richText.text = '';
+      richText.updateText(true)
+      return;
+    }
     // 攻击
-    setThemHp((data) => {
-      // 如果击败怪物
-      if (data - attack <= 0) {
-        resetRewardList();
-        setRewardTime(true);
-        setLevel(level + 1);
-        setCoin(coin + 5 + level);
-        setThemHpMax(themHpMax + 10);
-        setThemHp(themHpMax + 10);
-        setStronger(false);
-        if (level % 3 === 0) {
-          setThemAttack(themAttack + 2);
-        }
-        clearInterval(intervalAtt.current);
-        intervalAtt.current = undefined;
+    if (gameState.current.them.stronger) {
+      gameState.current.them.hp -= gameState.current.my.attack / 2;
+    } else {
+      gameState.current.them.hp -= gameState.current.my.attack;
+    }
+    // 如果击败怪物
+    if (gameState.current.them.hp <= 0) {
+      resetRewardList();
+      setRewardTime(true);
+      setLevel(level + 1);
+      gameState.current.level++;
+      gameState.current.coin += 5 + level;
+      gameState.current.them.hpMax += 10;
+      gameState.current.them.hp = gameState.current.them.hpMax;
+      gameState.current.them.stronger = false;
+      richText.text = ''
+      richText.updateText(true)
+
+      if (gameState.current.level % 3 === 0) {
+        gameState.current.them.attack += 2;
       }
-      if (stronger) {
-        return data - attack / 2;
-      }
-      return data - attack;
-    });
+      gameState.current.attacking = false;
+    }
+    // 刷新页面
+    setGameRenderState(gameState.current)
   };
-  // 进入战斗
-  const attacking = ({ stronger }: { stronger?: boolean }) => {
-    intervalAtt.current = setInterval(() => {
-      attackOnce({ stronger });
-    }, 100);
-  };
+
   // 计算收益列表
   const resetRewardList = () => {
     const list = rewardListData.map((item) => {
@@ -260,16 +262,58 @@ function App() {
     });
     setRewardList(list);
   };
-
+  const timer = useRef(0);
+  const myHpRender = useRef<{
+    obj: Graphics;
+    x: number;
+    y: number;
+  }>();
+  const richText = new Text('');
   useEffect(() => {
     if (!app) {
       return;
     }
-    const my = myBoat({ x: 50, y: app.screen.height - 150 });
-    const them = myBoat({ x: app.screen.width - 150, y: 50 });
+
+    const my = createBoat({ x: 50, y: app.screen.height - 150, color: 0x1cf639 });
+    myHpRender.current = my;
+    const them = createBoat({ x: app.screen.width - 150, y: 50, color: 0xde2160 });
+    richText.x = app.screen.width - 150;
+    richText.y = 150;
+    app.stage.addChild(richText)
+    app.ticker.add(() => {
+      timer.current++;
+      if (my) {
+        draw({ ...my, name: 'my' })
+      }
+      if (!gameState.current.attacking) {
+        return;
+      }
+      if (timer.current % 7 === 0) {
+        attackOnce();
+        if (my) {
+          draw({ ...my, name: 'my' })
+        }
+        if (them) {
+          draw({ ...them, name: 'them' })
+        }
+        timer.current = 1;
+      }
+    })
   }, [app]);
 
-  const myBoat = ({ x, y }: { x: number; y: number }) => {
+  const draw = ({ obj, x, y, name }: { obj: Graphics, x: number, y: number, name: 'my' | 'them' }) => {
+    obj.clear();
+    obj.beginFill(0x000000, 0.5);
+    obj.drawRect(x, y - 20, 100, 10);
+    if (name === 'my') {
+      obj.beginFill(0x1cf639);
+    } else {
+      obj.beginFill(0xde2160);
+    }
+    obj.drawRect(x, y - 20, Math.min(1, gameState.current[name].hp / gameState.current[name].hpMax) * 100, 10);
+  }
+  const createBoat = ({ x, y, color }: { x: number; y: number, color: 0x1cf639 | 0xde2160 }) => {
+    console.log('createBoat')
     if (!app) {
       return;
     }
@@ -289,8 +333,8 @@ function App() {
     const hpBig = new Graphics();
     hpBig.beginFill(0x000000, 0.5);
     hpBig.drawRect(x, y - 20, 100, 10);
-    hpBig.beginFill(0xde2160);
-    hpBig.drawRect(x, y - 20, Math.min(1, hp / hpMax) * 100, 10);
+    hpBig.beginFill(color);
+    hpBig.drawRect(x, y - 20, Math.min(1, gameState.current.my.hp / gameState.current.my.hpMax) * 100, 10);
     app.stage.addChild(hpBig);
 
     return { obj: hpBig, x, y };
@@ -299,76 +343,62 @@ function App() {
     <div className="App">
       {/* 顶部信息区域 */}
       {/* TODO: */}
-      <TopInfos hpMax={hpMax} attack={attack} coin={coin} />
+      <TopInfos hpMax={gameRenderState.my.hpMax} attack={gameRenderState.my.attack} coin={gameRenderState.coin} />
       {/* 关卡数 */}
-      <div className="level">Level. {level}</div>
+      <div className="level">Level. {gameRenderState.level}</div>
       {/* 核心游戏画面 */}
       {/* TODO: */}
-      {/* <div className="gameSpace" ref={myRef}></div> */}
-      <div className="gameSpace">
-        <div className="my">
-          <div className="myHpWrap">
-            <div
-              className="myHp"
-              style={{ width: Math.min(1, hp / hpMax) * 100 + '%' }}
-            ></div>
-          </div>
-          <div className="myObj"></div>
-        </div>
-        <div className="them">
-          <div className="myHpWrap">
-            <div
-              className="themHp"
-              style={{ width: Math.min(1, themHp / themHpMax) * 100 + '%' }}
-            ></div>
-          </div>
-          <div className="myObj"></div>
-          <div className="themObjText">{stronger ? '海盗首领🏴‍☠️' : ''}</div>
-        </div>
-      </div>
+      <div className="gameSpace" ref={myRef}></div>
       {/* 底部选择区域 */}
       <BottomButtons
         btnList={
           rewardTime
             ? rewardList
             : [
-                { label: '1', name: '向左前进' },
-                { label: '2', name: '前进' },
-                { label: '3', name: '向右前进' },
-              ]
+              { label: '1', name: '向左前进' },
+              { label: '2', name: '前进' },
+              { label: '3', name: '向右前进' },
+            ]
         }
         onConfirm={(item) => {
+          console.log(gameState.current.attacking)
           if (rewardTime) {
             if (item.label === 'A') {
-              setAttack(attack + (item.num || 1));
+              gameState.current.my.attack += (item.num || 1);
             }
             if (item.label === 'H') {
-              setHp(Math.min(hp + hpMax * (item.num || 0.2), hpMax));
+              gameState.current.my.hp = Math.min(gameState.current.my.attack + gameState.current.my.hpMax * (item.num || 0.2), gameState.current.my.hpMax)
             }
             if (item.label === 'HP') {
               const addHp = item.num || 100;
-              setHpMax(hpMax + addHp);
-              setHp(hp + addHp);
+              gameState.current.my.hpMax += addHp;
+              gameState.current.my.hp += addHp;
             }
+            setGameRenderState(gameState.current)
             setRewardTime(false);
+            console.log('myHpRender.current', myHpRender.current)
+            if (myHpRender.current) {
+              draw({ ...myHpRender.current, name: 'my' })
+            }
           }
           if (!rewardTime) {
-            if (intervalAtt.current !== undefined) {
+            console.log(gameState.current.attacking)
+
+            if (gameState.current.attacking === true) {
               return null;
             }
             // 运气不好增强怪兽
             const num = Math.random() * 3;
-            let stronger = false;
             if (
               (num < 1 && item.label === '1') ||
               (num >= 1 && num < 2 && item.label === '2') ||
               (num >= 2 && num < 3 && item.label === '3')
             ) {
-              setStronger(true);
-              attacking({ stronger: true });
-              return;
+              gameState.current.them.stronger = true;
+              richText.text = '海岛首领'
+              richText.updateText(true)
             }
-            attacking({ stronger });
+            gameState.current.attacking = true;
           }
         }}
       />

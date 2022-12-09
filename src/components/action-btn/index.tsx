@@ -23,7 +23,6 @@ function ActionBtn({
   text,
   num,
   color,
-  key,
   ...props
 }: ActionBtnProps) {
   const { className } = props;

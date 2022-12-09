@@ -1,13 +1,13 @@
 .App {
   text-align: center;
-  background-color: aqua;
+  background-color: #1099bb;
   height: 100vh;
 }
 
 .gameSpace {
   position: relative;
   /* transform: translateY(50%); */
-  background-color: aqua;
+  background-color: #1099bb;
   width: 750px;
   height: 750px;
 }
@@ -34,7 +34,7 @@
 
 .myHp {
   height: 20px;
-  background-color: rgb(28, 246, 57);
+  background-color: #1cf639;
 }
 
 .them {
