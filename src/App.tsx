@@ -185,16 +185,17 @@ const App = () => {
         setStronger(false);
         clearInterval(intervalAtt.current);
         intervalAtt.current = undefined;
-        if (level < 10) {
+        const num = level - 1;
+        if (num < 10) {
           alert('你死啦，重新开始吧');
-        } else if (level < 20) {
-          alert(`击败了${level}艘海盗船，不错哦`);
-        } else if (level < 50) {
-          alert(`击败了${level}艘海盗船，太强啦`);
-        } else if (level < 100) {
-          alert(`击败了${level}艘海盗船，牛逼plus`);
+        } else if (num < 20) {
+          alert(`击败了${num}艘海盗船，不错哦`);
+        } else if (num < 50) {
+          alert(`击败了${num}艘海盗船，太强啦`);
+        } else if (num < 100) {
+          alert(`击败了${num}艘海盗船，牛逼plus`);
         } else {
-          alert(`击败了${level}艘海盗船，海贼王就是你啦`);
+          alert(`击败了${num}艘海盗船，海贼王就是你啦`);
         }
       }
       if (stronger) {
