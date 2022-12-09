@@ -1,7 +1,140 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import BottomButtons from './components/bottom-buttons';
 import TopInfos from './components/top-infos';
 import './App.css';
+import { ActionBtnProps } from './components/action-btn';
+
+const rewardListData = [
+  [
+    {
+      label: 'A',
+      name: '攻击力',
+      text: '+1',
+      num: 1,
+      weight: 49,
+      color: '#333333',
+    },
+    {
+      label: 'A',
+      name: '攻击力',
+      text: '+2',
+      num: 2,
+      weight: 30,
+      color: '#008000',
+    },
+    {
+      label: 'A',
+      name: '攻击力',
+      text: '+3',
+      num: 3,
+      weight: 15,
+      color: '#0000FF',
+    },
+    {
+      label: 'A',
+      name: '攻击力',
+      text: '+4',
+      num: 4,
+      weight: 5,
+      color: '#8E04A7',
+    },
+    {
+      label: 'A',
+      name: '攻击力',
+      text: '+5',
+      num: 5,
+      weight: 1,
+      // color: '#FFA500',
+      color: '#FF0000',
+    },
+  ],
+  [
+    {
+      label: 'H',
+      name: '生命值',
+      text: '+20%',
+      num: 0.2,
+      weight: 49,
+      color: '#333333',
+    },
+    {
+      label: 'H',
+      name: '生命值',
+      text: '+40%',
+      num: 0.4,
+      weight: 30,
+      color: '#008000',
+    },
+    {
+      label: 'H',
+      name: '生命值',
+      text: '+60%',
+      num: 0.6,
+      weight: 15,
+      color: '#0000FF',
+    },
+    {
+      label: 'H',
+      name: '生命值',
+      text: '+80%',
+      num: 0.8,
+      weight: 5,
+      color: '#8E04A7',
+    },
+    {
+      label: 'H',
+      name: '生命值',
+      text: '+100%',
+      num: 1,
+      weight: 1,
+      // color: '#FFA500',
+      color: '#FF0000',
+    },
+  ],
+  [
+    {
+      label: 'HP',
+      name: '生命上限',
+      text: '+100',
+      num: 100,
+      weight: 49,
+      color: '#333333',
+    },
+    {
+      label: 'HP',
+      name: '生命上限',
+      text: '+200',
+      num: 200,
+      weight: 30,
+      color: '#008000',
+    },
+    {
+      label: 'HP',
+      name: '生命上限',
+      text: '+300',
+      num: 300,
+      weight: 15,
+      color: '#0000FF',
+    },
+    {
+      label: 'HP',
+      name: '生命上限',
+      text: '+400',
+      num: 400,
+      weight: 5,
+      color: '#8E04A7',
+    },
+    {
+      label: 'HP',
+      name: '生命上限',
+      text: '+500',
+      num: 500,
+      weight: 1,
+      // color: '#FFA500',
+      color: '#FF0000',
+    },
+  ],
+];
 
 /**
  * 主应用
@@ -26,8 +159,15 @@ const App = () => {
   const [rewardTime, setRewardTime] = useState(false);
   // 关卡
   const [level, setLevel] = useState(1);
+  // 奖励列表
+  const [rewardList, setRewardList] = useState<ActionBtnProps[]>([]);
+
+  // 更强的对手
+  const [stronger, setStronger] = useState(false);
 
   const intervalAtt = useRef<any>();
+
+  // 一次攻击
   const attackOnce = () => {
     if (intervalAtt.current === undefined) {
       return null;
@@ -42,6 +182,7 @@ const App = () => {
         setThemHp(10);
         setThemHpMax(10);
         setThemAttack(1);
+        setStronger(false);
         clearInterval(intervalAtt.current);
         intervalAtt.current = undefined;
         if (level < 10) {
@@ -50,35 +191,70 @@ const App = () => {
           alert(`击败了${level}艘海盗船，不错哦`);
         } else if (level < 50) {
           alert(`击败了${level}艘海盗船，太强啦`);
+        } else if (level < 100) {
+          alert(`击败了${level}艘海盗船，牛逼plus`);
         } else {
           alert(`击败了${level}艘海盗船，海贼王就是你啦`);
         }
+      }
+      if (stronger) {
+        return data - themAttack * 2;
       }
       return data - themAttack;
     });
     // 攻击
     setThemHp((data) => {
+      // 如果击败怪物
       if (data - attack <= 0) {
+        resetRewardList();
         setRewardTime(true);
         setLevel(level + 1);
         setCoin(coin + 5 + level);
         setThemHpMax(themHpMax + 10);
         setThemHp(themHpMax + 10);
-        if (level % 5 === 0) {
-          setThemAttack(themAttack + 1);
+        setStronger(false);
+        if (level % 3 === 0) {
+          setThemAttack(themAttack + 2);
         }
         clearInterval(intervalAtt.current);
         intervalAtt.current = undefined;
       }
+      if (stronger) {
+        return data - attack / 2;
+      }
       return data - attack;
     });
   };
+  // 进入战斗
   const attacking = () => {
     intervalAtt.current = setInterval(() => {
       attackOnce();
     }, 100);
   };
-  useEffect(() => {}, [themHp]);
+  // 计算收益列表
+  const resetRewardList = () => {
+    const list = rewardListData.map((item) => {
+      // 总权重
+      const allWeight = item.reduce((pre, cur) => {
+        return pre + cur.weight;
+      }, 0);
+      // 抽奖
+      const flagWeight = Math.random() * allWeight + 1;
+      let flagReward: ActionBtnProps | undefined = undefined;
+      item.reduce((pre, cur) => {
+        if (!flagReward && flagWeight <= pre + cur.weight) {
+          flagReward = cur;
+        }
+        return pre + cur.weight;
+      }, 0);
+      // 生成奖励
+      if (!flagReward) {
+        return item[0];
+      }
+      return flagReward;
+    });
+    setRewardList(list);
+  };
 
   return (
     <div className="App">
@@ -106,40 +282,32 @@ const App = () => {
               style={{ width: Math.min(1, themHp / themHpMax) * 100 + '%' }}
             ></div>
           </div>
-          <div className="myObj"></div>
+          <div className="myObj">{stronger ? '海盗首领🏴‍☠️' : ''}</div>
         </div>
       </div>
       {/* 底部选择区域 */}
       <BottomButtons
         btnList={
           rewardTime
-            ? [
-                { label: '1', name: '攻击力', num: '+1' },
-                { label: '2', name: '生命值', num: '+20%' },
-                { label: '3', name: '生命上限', num: '+100' },
-              ]
+            ? rewardList
             : [
-                { label: '1', name: '向左前进', num: '' },
-                { label: '2', name: '前进', num: '' },
-                { label: '3', name: '向右前进', num: '' },
+                { label: '1', name: '向左前进' },
+                { label: '2', name: '前进' },
+                { label: '3', name: '向右前进' },
               ]
         }
         onConfirm={(item) => {
-          console.log('intervalAtt.current ', intervalAtt.current);
-          console.log(
-            'intervalAtt.current !== undefined',
-            intervalAtt.current !== undefined
-          );
           if (rewardTime) {
-            if (item.label === '1') {
-              setAttack(attack + 1);
+            if (item.label === 'A') {
+              setAttack(attack + (item.num || 1));
             }
-            if (item.label === '2') {
-              setHp(Math.min(hp + hpMax * 0.2, hpMax));
+            if (item.label === 'H') {
+              setHp(Math.min(hp + hpMax * (item.num || 0.2), hpMax));
             }
-            if (item.label === '3') {
-              setHpMax(hpMax + 100);
-              setHp(hp + 100);
+            if (item.label === 'HP') {
+              const addHp = item.num || 100;
+              setHpMax(hpMax + addHp);
+              setHp(hp + addHp);
             }
             setRewardTime(false);
           }
@@ -147,9 +315,17 @@ const App = () => {
             if (intervalAtt.current !== undefined) {
               return null;
             }
+            // 运气不好增强怪兽
+            const num = Math.random() * 3;
+            if (
+              (num < 1 && item.label === '1') ||
+              (num >= 1 && num < 2 && item.label === '2') ||
+              (num >= 2 && num < 3 && item.label === '3')
+            ) {
+              setStronger(true);
+            }
             attacking();
           }
-          console.log(item);
         }}
       />
     </div>

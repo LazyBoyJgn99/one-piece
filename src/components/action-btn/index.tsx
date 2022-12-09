@@ -5,6 +5,9 @@ import classNames from 'classnames';
 export interface ActionBtnProps {
   active?: boolean;
   name?: string;
+  text?: string;
+  num?: number;
+  color?: string;
   label?: string;
   [s: string]: any;
 }
@@ -17,7 +20,9 @@ function ActionBtn({
   active,
   label,
   name,
+  text,
   num,
+  color,
   key,
   ...props
 }: ActionBtnProps) {
@@ -26,9 +31,10 @@ function ActionBtn({
     <div
       className={classNames('actionBtn', active && 'active', className)}
       {...props}
+      style={{ color: color }}
     >
       <div className="actionBtnName">{name}</div>
-      <div className="actionBtnNum">{num}</div>
+      <div className="actionBtnNum">{text}</div>
       {active && <div className="confirm">确认</div>}
     </div>
   );
