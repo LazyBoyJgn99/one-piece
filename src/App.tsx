@@ -168,7 +168,7 @@ const App = () => {
   const intervalAtt = useRef<any>();
 
   // 一次攻击
-  const attackOnce = () => {
+  const attackOnce = ({ stronger }: { stronger?: boolean }) => {
     if (intervalAtt.current === undefined) {
       return null;
     }
@@ -226,9 +226,9 @@ const App = () => {
     });
   };
   // 进入战斗
-  const attacking = () => {
+  const attacking = ({ stronger }: { stronger?: boolean }) => {
     intervalAtt.current = setInterval(() => {
-      attackOnce();
+      attackOnce({ stronger });
     }, 100);
   };
   // 计算收益列表
@@ -317,14 +317,18 @@ const App = () => {
             }
             // 运气不好增强怪兽
             const num = Math.random() * 3;
+            let stronger = false;
             if (
               (num < 1 && item.label === '1') ||
               (num >= 1 && num < 2 && item.label === '2') ||
               (num >= 2 && num < 3 && item.label === '3')
             ) {
               setStronger(true);
+              attacking({ stronger: true });
+              return;
             }
-            attacking();
+
+            attacking({ stronger });
           }
         }}
       />
