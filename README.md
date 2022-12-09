@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# 海盗探险小游戏
 
-[Create React App](https://github.com/facebook/create-react-app).
+网址：[https://lazyboyjgn99.github.io/one-piece/](https://lazyboyjgn99.github.io/one-piece/)
 
 ## Scripts
 
