@@ -7,7 +7,6 @@ import { FillStyle, Graphics, Sprite, Text } from 'pixi.js';
 
 import './App.css';
 
-
 const rewardListData = [
   [
     {
@@ -158,14 +157,14 @@ function App() {
       hp: 10,
       hpMax: 10,
       attack: 1,
-      stronger: false
+      stronger: false,
     },
     coin: 0,
     level: 1,
-    attacking: false
-  })
+    attacking: false,
+  });
   // 用于dom渲染
-  const [gameRenderState, setGameRenderState] = useState(gameState.current)
+  const [gameRenderState, setGameRenderState] = useState(gameState.current);
 
   // 收获时间
   const [rewardTime, setRewardTime] = useState(false);
@@ -173,7 +172,6 @@ function App() {
   const [level, setLevel] = useState(1);
   // 奖励列表
   const [rewardList, setRewardList] = useState<ActionBtnProps[]>([]);
-
 
   // 一次攻击
   const attackOnce = () => {
@@ -198,16 +196,16 @@ function App() {
       }
       setLevel(1);
       gameState.current.level = 1;
-      gameState.current.my.hp = 100
-      gameState.current.my.hpMax = 100
-      gameState.current.my.attack = 1
-      gameState.current.them.hp = 10
-      gameState.current.them.hpMax = 10
-      gameState.current.them.attack = 1
-      gameState.current.them.stronger = false
-      gameState.current.attacking = false
+      gameState.current.my.hp = 100;
+      gameState.current.my.hpMax = 100;
+      gameState.current.my.attack = 1;
+      gameState.current.them.hp = 10;
+      gameState.current.them.hpMax = 10;
+      gameState.current.them.attack = 1;
+      gameState.current.them.stronger = false;
+      gameState.current.attacking = false;
       richText.text = '';
-      richText.updateText(true)
+      richText.updateText(true);
       return;
     }
     // 攻击
@@ -226,8 +224,8 @@ function App() {
       gameState.current.them.hpMax += 10;
       gameState.current.them.hp = gameState.current.them.hpMax;
       gameState.current.them.stronger = false;
-      richText.text = ''
-      richText.updateText(true)
+      richText.text = '';
+      richText.updateText(true);
 
       if (gameState.current.level % 3 === 0) {
         gameState.current.them.attack += 2;
@@ -235,7 +233,7 @@ function App() {
       gameState.current.attacking = false;
     }
     // 刷新页面
-    setGameRenderState(gameState.current)
+    setGameRenderState(gameState.current);
   };
 
   // 计算收益列表
@@ -274,16 +272,24 @@ function App() {
       return;
     }
 
-    const my = createBoat({ x: 50, y: app.screen.height - 150, color: 0x1cf639 });
+    const my = createBoat({
+      x: 50,
+      y: app.screen.height - 150,
+      color: 0x1cf639,
+    });
     myHpRender.current = my;
-    const them = createBoat({ x: app.screen.width - 150, y: 50, color: 0xde2160 });
+    const them = createBoat({
+      x: app.screen.width - 150,
+      y: 50,
+      color: 0xde2160,
+    });
     richText.x = app.screen.width - 150;
     richText.y = 150;
-    app.stage.addChild(richText)
+    app.stage.addChild(richText);
     app.ticker.add(() => {
       timer.current++;
       if (my) {
-        draw({ ...my, name: 'my' })
+        draw({ ...my, name: 'my' });
       }
       if (!gameState.current.attacking) {
         return;
@@ -291,17 +297,27 @@ function App() {
       if (timer.current % 7 === 0) {
         attackOnce();
         if (my) {
-          draw({ ...my, name: 'my' })
+          draw({ ...my, name: 'my' });
         }
         if (them) {
-          draw({ ...them, name: 'them' })
+          draw({ ...them, name: 'them' });
         }
         timer.current = 1;
       }
-    })
+    });
   }, [app]);
 
-  const draw = ({ obj, x, y, name }: { obj: Graphics, x: number, y: number, name: 'my' | 'them' }) => {
+  const draw = ({
+    obj,
+    x,
+    y,
+    name,
+  }: {
+    obj: Graphics;
+    x: number;
+    y: number;
+    name: 'my' | 'them';
+  }) => {
     obj.clear();
     obj.beginFill(0x000000, 0.5);
     obj.drawRect(x, y - 20, 100, 10);
@@ -310,17 +326,33 @@ function App() {
     } else {
       obj.beginFill(0xde2160);
     }
-    obj.drawRect(x, y - 20, Math.min(1, gameState.current[name].hp / gameState.current[name].hpMax) * 100, 10);
-  }
-  const createBoat = ({ x, y, color }: { x: number; y: number, color: 0x1cf639 | 0xde2160 }) => {
-    console.log('createBoat')
+    obj.drawRect(
+      x,
+      y - 20,
+      Math.min(1, gameState.current[name].hp / gameState.current[name].hpMax) *
+        100,
+      10
+    );
+  };
+  const createBoat = ({
+    x,
+    y,
+    color,
+  }: {
+    x: number;
+    y: number;
+    color: 0x1cf639 | 0xde2160;
+  }) => {
+    console.log('createBoat');
     if (!app) {
       return;
     }
     new FillStyle().color = 0xff0000;
 
     // create a new Sprite from an image path
-    const bunny = Sprite.from('https://i.ibb.co/wrHMGz5/px-Art-3.png');
+    const bunny = Sprite.from(
+      'data:image/png;base64,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'
+    );
     bunny.width = 100;
     bunny.height = 100;
 
@@ -334,7 +366,12 @@ function App() {
     hpBig.beginFill(0x000000, 0.5);
     hpBig.drawRect(x, y - 20, 100, 10);
     hpBig.beginFill(color);
-    hpBig.drawRect(x, y - 20, Math.min(1, gameState.current.my.hp / gameState.current.my.hpMax) * 100, 10);
+    hpBig.drawRect(
+      x,
+      y - 20,
+      Math.min(1, gameState.current.my.hp / gameState.current.my.hpMax) * 100,
+      10
+    );
     app.stage.addChild(hpBig);
 
     return { obj: hpBig, x, y };
@@ -343,7 +380,11 @@ function App() {
     <div className="App">
       {/* 顶部信息区域 */}
       {/* TODO: */}
-      <TopInfos hpMax={gameRenderState.my.hpMax} attack={gameRenderState.my.attack} coin={gameRenderState.coin} />
+      <TopInfos
+        hpMax={gameRenderState.my.hpMax}
+        attack={gameRenderState.my.attack}
+        coin={gameRenderState.coin}
+      />
       {/* 关卡数 */}
       <div className="level">Level. {gameRenderState.level}</div>
       {/* 核心游戏画面 */}
@@ -355,34 +396,38 @@ function App() {
           rewardTime
             ? rewardList
             : [
-              { label: '1', name: '向左前进' },
-              { label: '2', name: '前进' },
-              { label: '3', name: '向右前进' },
-            ]
+                { label: '1', name: '向左前进' },
+                { label: '2', name: '前进' },
+                { label: '3', name: '向右前进' },
+              ]
         }
         onConfirm={(item) => {
-          console.log(gameState.current.attacking)
+          console.log(gameState.current.attacking);
           if (rewardTime) {
             if (item.label === 'A') {
-              gameState.current.my.attack += (item.num || 1);
+              gameState.current.my.attack += item.num || 1;
             }
             if (item.label === 'H') {
-              gameState.current.my.hp = Math.min(gameState.current.my.attack + gameState.current.my.hpMax * (item.num || 0.2), gameState.current.my.hpMax)
+              gameState.current.my.hp = Math.min(
+                gameState.current.my.hp +
+                  gameState.current.my.hpMax * (item.num || 0.2),
+                gameState.current.my.hpMax
+              );
             }
             if (item.label === 'HP') {
               const addHp = item.num || 100;
               gameState.current.my.hpMax += addHp;
               gameState.current.my.hp += addHp;
             }
-            setGameRenderState(gameState.current)
+            setGameRenderState(gameState.current);
             setRewardTime(false);
-            console.log('myHpRender.current', myHpRender.current)
+            console.log('myHpRender.current', myHpRender.current);
             if (myHpRender.current) {
-              draw({ ...myHpRender.current, name: 'my' })
+              draw({ ...myHpRender.current, name: 'my' });
             }
           }
           if (!rewardTime) {
-            console.log(gameState.current.attacking)
+            console.log(gameState.current.attacking);
 
             if (gameState.current.attacking === true) {
               return null;
@@ -395,8 +440,8 @@ function App() {
               (num >= 2 && num < 3 && item.label === '3')
             ) {
               gameState.current.them.stronger = true;
-              richText.text = '海岛首领'
-              richText.updateText(true)
+              richText.text = '海岛首领';
+              richText.updateText(true);
             }
             gameState.current.attacking = true;
           }
